@@ -44,16 +44,16 @@ ext {
     //@formatter:off
     gradleVersion               = '4.9'
 
-    lavaplayerVersion           = '1.3.22'
-    javaWebSocketVersion        = '1.3.8'
-    slf4jVersion                = '1.7.25'
-    jsonOrgVersion              = '20180130'
-    jdaVersion                  = '4.0.0_50'
-    spotbugsAnnotationsVersion  = '3.1.3'
-    prometheusVersion           = '0.4.0'
+    lavaplayerVersion           = '1.3.25'
+    javaWebSocketVersion        = '1.4.0'
+    slf4jVersion                = '1.7.29'
+    jsonOrgVersion              = '20190722'
+    jdaVersion                  = '4.0.0_59'
+    spotbugsAnnotationsVersion  = '3.1.12'
+    prometheusVersion           = '0.8.0'
 
-    junitJupiterVersion         = '5.2.0'
-    junitPlatformVersion        = '1.2.0'
+    junitJupiterVersion         = '5.5.2'
+    junitPlatformVersion        = '1.5.2'
     logbackVersion              = '1.2.3'
     unirestVersion              = '1.4.9'
 
