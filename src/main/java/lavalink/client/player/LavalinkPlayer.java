@@ -187,7 +187,7 @@ public class LavalinkPlayer implements IPlayer {
     }
 
     @Override
-    public float getVolume() {
+    public int getVolume() {
         return filters.getVolume();
     }
 

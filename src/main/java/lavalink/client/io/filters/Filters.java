@@ -10,11 +10,11 @@ import static com.sedmelluq.discord.lavaplayer.filter.equalizer.Equalizer.BAND_C
 public class Filters {
 
     @SuppressWarnings("WeakerAccess")
-    public static float DEFAULT_VOLUME = 1.0f;
+    public static int DEFAULT_VOLUME = 100;
 
     private final LavalinkPlayer player;
     private final Runnable onCommit;
-    private float volume = DEFAULT_VOLUME;
+    private int volume = DEFAULT_VOLUME;
     private float[] bands = new float[BAND_COUNT];
 
     /**
@@ -46,14 +46,14 @@ public class Filters {
         bands[band] = gain;
     }
 
-    public float getVolume() {
+    public int getVolume() {
         return volume;
     }
 
     /**
      * @param volume where 1.0f is regular volume. Values greater than 1.0f are allowed, but may cause clipping.
      */
-    public void setVolume(float volume) {
+    public void setVolume(int volume) {
         if (volume < 0) throw new IllegalArgumentException("Volume must be greater than 0");
         this.volume = volume;
     }

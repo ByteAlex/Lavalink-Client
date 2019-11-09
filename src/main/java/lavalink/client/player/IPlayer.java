@@ -43,7 +43,7 @@ public interface IPlayer {
 
     void setVolume(int volume);
 
-    float getVolume();
+    int getVolume();
 
     void setBand(int band, float gain);
 

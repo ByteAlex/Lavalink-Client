@@ -87,7 +87,7 @@ public class LavaplayerPlayerWrapper implements IPlayer {
     }
 
     @Override
-    public float getVolume() {
+    public int getVolume() {
         return player.getVolume();
     }
 
