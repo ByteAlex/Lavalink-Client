@@ -26,11 +26,9 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import lavalink.client.LavalinkUtil;
 import lavalink.client.io.LavalinkSocket;
 import lavalink.client.io.Link;
-import lavalink.client.player.event.IPlayerEventListener;
-import lavalink.client.player.event.PlayerEvent;
-import lavalink.client.player.event.PlayerPauseEvent;
-import lavalink.client.player.event.PlayerResumeEvent;
-import lavalink.client.player.event.TrackStartEvent;
+import lavalink.client.io.filters.Filters;
+import lavalink.client.player.event.*;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -41,9 +39,11 @@ public class LavalinkPlayer implements IPlayer {
 
     private AudioTrack track = null;
     private boolean paused = false;
-    private int volume = 100;
     private long updateTime = -1;
     private long position = -1;
+    private Filters filters = new Filters(this, () -> {
+       //Do nothing :)
+    });
 
     private final Link link;
     private List<IPlayerEventListener> listeners = new CopyOnWriteArrayList<>();
@@ -93,7 +93,7 @@ public class LavalinkPlayer implements IPlayer {
                 json.put("endTime", trackData.endPos);
             }
             json.put("pause", paused);
-            json.put("volume", volume);
+            json.put("volume", filters.getVolume());
             //noinspection ConstantConditions
             link.getNode(true).send(json.toString());
 
@@ -137,6 +137,8 @@ public class LavalinkPlayer implements IPlayer {
         }
     }
 
+
+
     @Override
     public boolean isPaused() {
         return paused;
@@ -172,7 +174,7 @@ public class LavalinkPlayer implements IPlayer {
     @Override
     public void setVolume(int volume) {
         volume = Math.min(1000, Math.max(0, volume)); // Lavaplayer bounds
-        this.volume = volume;
+        filters.setVolume(volume);
 
         LavalinkSocket node = link.getNode(false);
         if (node == null) return;
@@ -185,8 +187,33 @@ public class LavalinkPlayer implements IPlayer {
     }
 
     @Override
-    public int getVolume() {
-        return volume;
+    public float getVolume() {
+        return filters.getVolume();
+    }
+
+    @Override
+    public void setBand(int band, float gain) {
+        filters.setBand(band, gain);
+
+        LavalinkSocket node = link.getNode(false);
+        if (node == null) return;
+
+        float[] bands = filters.getBands();
+        JSONArray jsonBands = new JSONArray();
+        for (int i = 0; i < bands.length; i++) {
+            jsonBands.put(i, bands[i]);
+        }
+
+        JSONObject json = new JSONObject();
+        json.put("op", "equalizer");
+        json.put("guildId", link.getGuildId());
+        json.put("bands", jsonBands);
+        node.send(json.toString());
+    }
+
+    @Override
+    public float[] getBands() {
+        return filters.getBands();
     }
 
     public void provideState(JSONObject json) {
