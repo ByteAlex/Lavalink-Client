@@ -42,7 +42,7 @@ public class LavalinkPlayer implements IPlayer {
     private long updateTime = -1;
     private long position = -1;
     private Filters filters = new Filters(this, () -> {
-       //Do nothing :)
+        //Do nothing :)
     });
 
     private final Link link;
@@ -138,7 +138,6 @@ public class LavalinkPlayer implements IPlayer {
     }
 
 
-
     @Override
     public boolean isPaused() {
         return paused;
@@ -201,7 +200,11 @@ public class LavalinkPlayer implements IPlayer {
         float[] bands = filters.getBands();
         JSONArray jsonBands = new JSONArray();
         for (int i = 0; i < bands.length; i++) {
-            jsonBands.put(i, bands[i]);
+            jsonBands.put(
+                new JSONObject()
+                    .put("band", i)
+                    .put("gain", bands[i])
+            );
         }
 
         JSONObject json = new JSONObject();
