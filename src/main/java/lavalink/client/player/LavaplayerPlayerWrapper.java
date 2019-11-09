@@ -22,6 +22,7 @@
 
 package lavalink.client.player;
 
+import com.sedmelluq.discord.lavaplayer.filter.equalizer.EqualizerFactory;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventListener;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
@@ -29,9 +30,13 @@ import com.sedmelluq.discord.lavaplayer.track.playback.AudioFrame;
 import com.sedmelluq.discord.lavaplayer.track.playback.MutableAudioFrame;
 import lavalink.client.player.event.IPlayerEventListener;
 
+import static com.sedmelluq.discord.lavaplayer.filter.equalizer.Equalizer.BAND_COUNT;
+
 public class LavaplayerPlayerWrapper implements IPlayer {
 
     private final AudioPlayer player;
+    private final EqualizerFactory eqFac = new EqualizerFactory();
+    private final float[] bandMultipliers = new float[BAND_COUNT];
 
     public LavaplayerPlayerWrapper(AudioPlayer player) {
         this.player = player;
@@ -82,8 +87,20 @@ public class LavaplayerPlayerWrapper implements IPlayer {
     }
 
     @Override
-    public int getVolume() {
+    public float getVolume() {
         return player.getVolume();
+    }
+
+    @Override
+    public void setBand(int band, float gain) {
+        eqFac.setGain(band, gain);
+        player.setFilterFactory(eqFac);
+        bandMultipliers[band] = gain;
+    }
+
+    @Override
+    public float[] getBands() {
+        return bandMultipliers;
     }
 
     @Override
