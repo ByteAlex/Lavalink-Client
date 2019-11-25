@@ -2,9 +2,10 @@ package lavalink.client.io.jda;
 
 import lavalink.client.io.Link;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.dv8tion.jda.api.hooks.VoiceDispatchInterceptor;
-import org.json.JSONObject;
+import net.dv8tion.jda.api.utils.data.DataObject;
 
 import javax.annotation.Nonnull;
 
@@ -21,14 +22,14 @@ public class JDAVoiceInterceptor implements VoiceDispatchInterceptor {
 
     @Override
     public void onVoiceServerUpdate(@Nonnull VoiceServerUpdate update) {
-        JSONObject content = new JSONObject(update.toData().getObject("d").toMap());
+        DataObject content = update.toData().getObject("d");
 
         // Get session
         Guild guild = update.getGuild();
-        if (guild == null)
-            throw new IllegalArgumentException("Attempted to start audio connection with Guild that doesn't exist! JSON: " + content);
-
-        lavalink.getLink(guild).onVoiceServerUpdate(content, guild.getSelfMember().getVoiceState().getSessionId());
+        GuildVoiceState vs = guild.getSelfMember().getVoiceState();
+        if (vs != null) {
+            lavalink.getLink(guild).onVoiceServerUpdate(content, vs.getSessionId());
+        }
     }
 
     @Override

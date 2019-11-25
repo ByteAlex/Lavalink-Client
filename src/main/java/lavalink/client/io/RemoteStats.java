@@ -22,12 +22,13 @@
 
 package lavalink.client.io;
 
-import org.json.JSONObject;
+
+import net.dv8tion.jda.api.utils.data.DataObject;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class RemoteStats {
 
-    private final JSONObject json;
+    private final DataObject json;
     private final int players;
     private final int playingPlayers;
     private final long uptime; //in millis
@@ -46,22 +47,25 @@ public class RemoteStats {
     private int avgFramesNulledPerMinute = -1;
     private int avgFramesDeficitPerMinute = -1;
 
-    RemoteStats(JSONObject json) {
+    RemoteStats(DataObject json) {
         this.json = json;
         players = json.getInt("players");
         playingPlayers = json.getInt("playingPlayers");
         uptime = json.getLong("uptime");
 
-        memFree = json.getJSONObject("memory").getLong("free");
-        memUsed = json.getJSONObject("memory").getLong("used");
-        memAllocated = json.getJSONObject("memory").getLong("allocated");
-        memReservable = json.getJSONObject("memory").getLong("reservable");
+        DataObject memory = json.getObject("memory");
+        memFree = memory.getLong("free");
+        memUsed = memory.getLong("used");
+        memAllocated = memory.getLong("allocated");
+        memReservable = memory.getLong("reservable");
 
-        cpuCores = json.getJSONObject("cpu").getInt("cores");
-        systemLoad = json.getJSONObject("cpu").getDouble("systemLoad");
-        lavalinkLoad = json.getJSONObject("cpu").getDouble("lavalinkLoad");
+        DataObject cpu =  json.getObject("cpu");
+        cpuCores = cpu.getInt("cores");
+        systemLoad = (double) cpu.get("systemLoad");
+        lavalinkLoad = (double) cpu.get("lavalinkLoad");
 
-        JSONObject frames = json.optJSONObject("frameStats");
+        DataObject frames = json.hasKey("frameStats") ? json.getObject("frameStats") : null;
+
 
         if (frames != null) {
             avgFramesSentPerMinute = frames.getInt("sent");
@@ -70,7 +74,7 @@ public class RemoteStats {
         }
     }
 
-    public JSONObject getAsJson() {
+    public DataObject getAsJson() {
         return json;
     }
 

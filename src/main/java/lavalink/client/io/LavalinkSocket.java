@@ -28,10 +28,13 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import lavalink.client.LavalinkUtil;
 import lavalink.client.player.LavalinkPlayer;
-import lavalink.client.player.event.*;
+import lavalink.client.player.event.PlayerEvent;
+import lavalink.client.player.event.TrackEndEvent;
+import lavalink.client.player.event.TrackExceptionEvent;
+import lavalink.client.player.event.TrackStuckEvent;
+import net.dv8tion.jda.api.utils.data.DataObject;
 import org.java_websocket.drafts.Draft;
 import org.java_websocket.handshake.ServerHandshake;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,7 +79,7 @@ public class LavalinkSocket extends ReusableWebSocket {
 
     @Override
     public void onMessage(String message) {
-        JSONObject json = new JSONObject(message);
+        DataObject json = DataObject.fromJson(message);
 
         if (!Objects.equals(json.getString("op"), "playerUpdate")) {
             log.debug(message);
@@ -86,7 +89,7 @@ public class LavalinkSocket extends ReusableWebSocket {
             case "playerUpdate":
                 lavalink.getLink(json.getString("guildId"))
                         .getPlayer()
-                        .provideState(json.getJSONObject("state"));
+                        .provideState(json.getObject("state"));
                 break;
             case "stats":
                 stats = new RemoteStats(json);
@@ -112,7 +115,7 @@ public class LavalinkSocket extends ReusableWebSocket {
      * 3. TrackStuckEvent
      * 4. WebSocketClosedEvent
      */
-    private void handleEvent(JSONObject json) throws IOException {
+    private void handleEvent(DataObject json) throws IOException {
         Link link = lavalink.getLink(json.getString("guildId"));
         LavalinkPlayer player = lavalink.getLink(json.getString("guildId")).getPlayer();
         PlayerEvent event = null;
@@ -126,8 +129,8 @@ public class LavalinkSocket extends ReusableWebSocket {
                 break;
             case "TrackExceptionEvent":
                 Exception ex;
-                if (json.has("exception")) {
-                    JSONObject jsonEx = json.getJSONObject("exception");
+                if (json.hasKey("exception")) {
+                    DataObject jsonEx = json.getObject("exception");
                     ex = new FriendlyException(
                             jsonEx.getString("message"),
                             FriendlyException.Severity.valueOf(jsonEx.getString("severity")),
