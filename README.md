@@ -1,4 +1,6 @@
-# Lavalink Client [![Release](https://img.shields.io/github/tag/FredBoat/Lavalink-Client.svg)](https://jitpack.io/#FredBoat/Lavalink-Client)
+## Original jitpack [![Release](https://img.shields.io/github/tag/FredBoat/Lavalink-Client.svg)](https://jitpack.io/#FredBoat/Lavalink-Client)
+
+# Lavalink Client Fork [![Release](https://img.shields.io/github/tag/ToxicMushroom/Lavalink-Client.svg)](https://jitpack.io/#ToxicMushroom/Lavalink-Client)
 
 ## Installation
 Lavalink does not have a maven repository and instead uses Jitpack.
@@ -7,6 +9,14 @@ You can add the following to your POM if you're using Maven:
 <dependencies>
     <dependency>
         <groupId>com.github.FredBoat</groupId>
+        <artifactId>Lavalink-Client</artifactId>
+        <version>x.y.z</version>
+    </dependency>
+</dependencies>
+<!-- or -->
+<dependencies>
+    <dependency>
+        <groupId>com.github.ToxicMushroom</groupId>
         <artifactId>Lavalink-Client</artifactId>
         <version>x.y.z</version>
     </dependency>
@@ -30,7 +40,9 @@ Or Gradle:
     }
 
     dependencies {
-        compile group: 'com.github.FredBoat', name: 'Lavalink-Client', version: 'x.y.z'
+        implementation group: 'com.github.FredBoat', name: 'Lavalink-Client', version: 'x.y.z'
+        //or
+        implementation group: 'com.github.ToxicMushroom', name: 'Lavalink-Client', version: 'x.y.z'
     }
 ```
 
