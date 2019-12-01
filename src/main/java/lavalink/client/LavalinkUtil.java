@@ -26,7 +26,7 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.bandcamp.BandcampAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.http.HttpAudioSourceManager;
-import com.sedmelluq.discord.lavaplayer.source.soundcloud.SoundCloudAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.source.soundcloud.*;
 import com.sedmelluq.discord.lavaplayer.source.twitch.TwitchStreamAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.vimeo.VimeoAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
@@ -50,7 +50,17 @@ public class LavalinkUtil {
         /* These are only to encode/decode messages */
         PLAYER_MANAGER.registerSourceManager(new YoutubeAudioSourceManager());
         PLAYER_MANAGER.registerSourceManager(new BandcampAudioSourceManager());
-        PLAYER_MANAGER.registerSourceManager(new SoundCloudAudioSourceManager());
+        PLAYER_MANAGER.registerSourceManager(new SoundCloudAudioSourceManager(
+            true,
+            new DefaultSoundCloudDataReader(),
+            new DefaultSoundCloudHtmlDataLoader(),
+            new DefaultSoundCloudFormatHandler(),
+            new DefaultSoundCloudPlaylistLoader(
+                new DefaultSoundCloudHtmlDataLoader(),
+                new DefaultSoundCloudDataReader(),
+                new DefaultSoundCloudFormatHandler()
+            )
+        ));
         PLAYER_MANAGER.registerSourceManager(new TwitchStreamAudioSourceManager());
         PLAYER_MANAGER.registerSourceManager(new VimeoAudioSourceManager());
         PLAYER_MANAGER.registerSourceManager(new HttpAudioSourceManager());
