@@ -24,6 +24,7 @@ package lavalink.client;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
+import com.sedmelluq.discord.lavaplayer.source.AudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.bandcamp.BandcampAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.http.HttpAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.soundcloud.SoundCloudAudioSourceManager;
@@ -38,6 +39,7 @@ import org.java_websocket.util.Base64;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.DataOutput;
 import java.io.IOException;
 
 public class LavalinkUtil {
@@ -118,6 +120,13 @@ public class LavalinkUtil {
 
     public static int getShardFromSnowflake(String snowflake, int numShards) {
         return (int) ((Long.parseLong(snowflake) >> 22) % numShards);
+    }
+
+
+    private void encodeTrackDetails(AudioTrack track, DataOutput output) throws IOException {
+        AudioSourceManager sourceManager = track.getSourceManager();
+        output.writeUTF(sourceManager.getSourceName());
+        sourceManager.encodeTrack(track, output);
     }
 
 }

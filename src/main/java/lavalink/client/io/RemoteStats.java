@@ -61,8 +61,8 @@ public class RemoteStats {
 
         DataObject cpu =  json.getObject("cpu");
         cpuCores = cpu.getInt("cores");
-        systemLoad = (double) cpu.get("systemLoad");
-        lavalinkLoad = (double) cpu.get("lavalinkLoad");
+        systemLoad = cpu.getInt("systemLoad");
+        lavalinkLoad = cpu.getInt("lavalinkLoad");
 
         DataObject frames = json.hasKey("frameStats") ? json.getObject("frameStats") : null;
 
