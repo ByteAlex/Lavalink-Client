@@ -6,7 +6,6 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.VoiceChannel;
-import net.dv8tion.jda.api.exceptions.GuildUnavailableException;
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,8 +37,8 @@ public class JdaLink extends Link {
         if (!channel.getGuild().equals(getJda().getGuildById(guild)))
             throw new IllegalArgumentException("The provided VoiceChannel is not a part of the Guild that this AudioManager handles." +
                     "Please provide a VoiceChannel from the proper Guild");
-        if (!channel.getGuild().isAvailable())
-            throw new GuildUnavailableException("Cannot open an Audio Connection with an unavailable guild. " +
+        if (!channel.getJDA().getUnavailableGuilds().contains(channel.getGuild().getId()))
+            throw new IllegalArgumentException("Cannot open an Audio Connection with an unavailable guild. " +
                     "Please wait until this Guild is available to open a connection.");
         final Member self = channel.getGuild().getSelfMember();
         if (!self.hasPermission(channel, Permission.VOICE_CONNECT) && !self.hasPermission(channel, Permission.VOICE_MOVE_OTHERS))
