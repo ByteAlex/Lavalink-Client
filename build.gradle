@@ -48,7 +48,7 @@ ext {
     javaWebSocketVersion        = '1.3.8'
 
     slf4jVersion                = '1.7.29'
-    jdaVersion                  = '4.0.0_73'
+    jdaVersion                  = '4.1.0_81'
     spotbugsAnnotationsVersion  = '3.1.12'
     prometheusVersion           = '0.8.0'
 
@@ -63,9 +63,9 @@ ext {
 
 
 dependencies {
-    compile group: 'com.sedmelluq', name: 'lavaplayer', version: lavaplayerVersion
-    compile group: 'org.java-websocket', name: 'Java-WebSocket', version: javaWebSocketVersion
-    compile group: 'org.slf4j', name: 'slf4j-api', version: slf4jVersion
+    implementation group: 'com.sedmelluq', name: 'lavaplayer', version: lavaplayerVersion
+    implementation group: 'org.java-websocket', name: 'Java-WebSocket', version: javaWebSocketVersion
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: slf4jVersion
     compileOnly group: 'net.dv8tion', name: 'JDA', version: jdaVersion
     testCompile group: 'net.dv8tion', name: 'JDA', version: jdaVersion
     compileOnly group: 'com.github.spotbugs', name: 'spotbugs-annotations', version: spotbugsAnnotationsVersion
