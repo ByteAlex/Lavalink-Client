@@ -37,7 +37,7 @@ public class JdaLink extends Link {
         if (!channel.getGuild().equals(getJda().getGuildById(guild)))
             throw new IllegalArgumentException("The provided VoiceChannel is not a part of the Guild that this AudioManager handles." +
                     "Please provide a VoiceChannel from the proper Guild");
-        if (!channel.getJDA().getUnavailableGuilds().contains(channel.getGuild().getId()))
+        if (channel.getJDA().getUnavailableGuilds().contains(channel.getGuild().getId()))
             throw new IllegalArgumentException("Cannot open an Audio Connection with an unavailable guild. " +
                     "Please wait until this Guild is available to open a connection.");
         final Member self = channel.getGuild().getSelfMember();
