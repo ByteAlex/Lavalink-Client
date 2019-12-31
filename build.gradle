@@ -1,4 +1,3 @@
-
 buildscript {
     ext {
         grgitVersion = '2.2.1'
@@ -42,21 +41,21 @@ repositories {
 
 ext {
     //@formatter:off
-    gradleVersion               = '4.9'
+    gradleVersion = '4.9'
 
-    lavaplayerVersion           = '1.3.32'
-    javaWebSocketVersion        = '1.3.8'
+    lavaplayerVersion = '1.3.32'
+    javaWebSocketVersion = '1.3.8'
 
-    slf4jVersion                = '1.7.29'
-    jdaVersion                  = '4.1.0_89'
-    spotbugsAnnotationsVersion  = '3.1.12'
-    prometheusVersion           = '0.8.0'
+    slf4jVersion = '1.7.29'
+    jdaVersion = '4.1.0_89'
+    spotbugsAnnotationsVersion = '3.1.12'
+    prometheusVersion = '0.8.0'
 
-    junitJupiterVersion         = '5.5.2'
-    junitPlatformVersion        = '1.5.2'
+    junitJupiterVersion = '5.5.2'
+    junitPlatformVersion = '1.5.2'
 
-    logbackVersion              = '1.2.3'
-    unirestVersion              = '1.4.9'
+    logbackVersion = '1.2.3'
+    unirestVersion = '1.4.9'
 
     //@formatter:on
 }
