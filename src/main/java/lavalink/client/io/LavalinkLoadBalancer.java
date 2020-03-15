@@ -87,6 +87,7 @@ public class LavalinkLoadBalancer {
             .filter(node -> node != connected)
             .filter(LavalinkSocket::isAvailable)
             .count();
+
         if (otherAvailableNodes > 0) { //only update links if this is the only connected node
             return;
         }

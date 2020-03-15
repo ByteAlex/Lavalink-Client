@@ -76,6 +76,13 @@ abstract public class Link {
         return guild;
     }
 
+    public LavalinkRestClient getRestClient() {
+        final LavalinkSocket node = getNode(true);
+        if (node == null)
+            throw new IllegalStateException("No available nodes!");
+        return node.getRestClient();
+    }
+
     public void disconnect() {
         setState(State.DISCONNECTING);
         queueAudioDisconnect();

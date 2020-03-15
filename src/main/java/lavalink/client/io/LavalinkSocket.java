@@ -38,6 +38,7 @@ import org.java_websocket.handshake.ServerHandshake;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.net.URI;
@@ -54,10 +55,13 @@ public class LavalinkSocket extends ReusableWebSocket {
     private final String name;
     @NonNull
     private final Lavalink lavalink;
+    @Nonnull
+    private final String password;
     @Nullable
     private RemoteStats stats;
     long lastReconnectAttempt = 0;
     private int reconnectsAttempted = 0;
+    private final LavalinkRestClient restClient;
     @NonNull
     private final URI remoteUri;
     private boolean available = false;
@@ -66,8 +70,21 @@ public class LavalinkSocket extends ReusableWebSocket {
         super(serverUri, protocolDraft, headers, TIMEOUT_MS);
         this.name = name;
         this.lavalink = lavalink;
+        this.password = headers.get("Authorization");
         this.remoteUri = serverUri;
+        this.restClient = new LavalinkRestClient(this);
     }
+
+    public LavalinkRestClient getRestClient() {
+        return restClient;
+    }
+
+    @NonNull
+    public String getPassword() {
+        return password;
+    }
+
+
 
     @Override
     public void onOpen(ServerHandshake handshakeData) {
