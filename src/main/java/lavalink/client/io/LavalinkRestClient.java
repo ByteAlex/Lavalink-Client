@@ -95,8 +95,9 @@ public final class LavalinkRestClient {
                     case "PLAYLIST_LOADED":
                         final DataArray trackData = loadResult.getArray("tracks");
                         final List<AudioTrack> tracks = new ArrayList<>();
-                        for (final Object track : trackData) {
-                            final String trackBase64 = ((DataObject) track).getString("track");
+                        for (int index = 0; index < trackData.length(); index++) {
+                            DataObject track = trackData.getObject(index);
+                            final String trackBase64 = track.getString("track");
                             final AudioTrack audioTrack = LavalinkUtil.toAudioTrack(trackBase64);
                             tracks.add(audioTrack);
                         }
