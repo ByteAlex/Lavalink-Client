@@ -176,6 +176,7 @@ public class LavalinkSocket extends ReusableWebSocket {
                 break;
             case "TrackStartEvent":
                 event = new TrackStartEvent(player, LavalinkUtil.toAudioTrackWithData(player, json.getString("track")));
+                break;
             default:
                 log.warn("Unexpected event type: " + json.getString("type"));
                 break;
