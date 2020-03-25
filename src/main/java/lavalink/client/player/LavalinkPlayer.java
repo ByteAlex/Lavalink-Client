@@ -27,7 +27,10 @@ import lavalink.client.LavalinkUtil;
 import lavalink.client.io.LavalinkSocket;
 import lavalink.client.io.Link;
 import lavalink.client.io.filters.Filters;
-import lavalink.client.player.event.*;
+import lavalink.client.player.event.IPlayerEventListener;
+import lavalink.client.player.event.PlayerEvent;
+import lavalink.client.player.event.PlayerPauseEvent;
+import lavalink.client.player.event.PlayerResumeEvent;
 import net.dv8tion.jda.api.utils.data.DataArray;
 import net.dv8tion.jda.api.utils.data.DataObject;
 
@@ -100,7 +103,6 @@ public class LavalinkPlayer implements IPlayer {
 
             updateTime = System.currentTimeMillis();
             this.track = track;
-            emitEvent(new TrackStartEvent(this, track));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

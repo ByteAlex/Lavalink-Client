@@ -28,10 +28,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import lavalink.client.LavalinkUtil;
 import lavalink.client.player.LavalinkPlayer;
-import lavalink.client.player.event.PlayerEvent;
-import lavalink.client.player.event.TrackEndEvent;
-import lavalink.client.player.event.TrackExceptionEvent;
-import lavalink.client.player.event.TrackStuckEvent;
+import lavalink.client.player.event.*;
 import net.dv8tion.jda.api.utils.data.DataObject;
 import org.java_websocket.drafts.Draft;
 import org.java_websocket.handshake.ServerHandshake;
@@ -177,6 +174,8 @@ public class LavalinkSocket extends ReusableWebSocket {
                         json.getBoolean("byRemote")
                 );
                 break;
+            case "TrackStartEvent":
+                event = new TrackStartEvent(player, LavalinkUtil.toAudioTrackWithData(player, json.getString("track")));
             default:
                 log.warn("Unexpected event type: " + json.getString("type"));
                 break;
