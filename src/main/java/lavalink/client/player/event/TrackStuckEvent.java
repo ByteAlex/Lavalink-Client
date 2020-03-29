@@ -29,11 +29,13 @@ public class TrackStuckEvent extends PlayerEvent {
 
     private AudioTrack track;
     private long thresholdMs;
+    private StackTraceElement[] stackTraceElements;
 
     public TrackStuckEvent(IPlayer player, AudioTrack track, long thresholdMs) {
         super(player);
         this.track = track;
         this.thresholdMs = thresholdMs;
+        this.stackTraceElements = new StackTraceElement[0];
     }
 
     public AudioTrack getTrack() {
@@ -42,5 +44,9 @@ public class TrackStuckEvent extends PlayerEvent {
 
     public long getThresholdMs() {
         return thresholdMs;
+    }
+
+    public StackTraceElement[] getStrackTraceElements() {
+        return stackTraceElements;
     }
 }
