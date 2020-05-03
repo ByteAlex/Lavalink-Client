@@ -94,6 +94,7 @@ public class D4JLavalink extends Lavalink<D4JLink> {
                 .then();
 
         final Mono<Void> voiceStateUpdateEvent = client.on(VoiceStateUpdateEvent.class)
+                .filterWhen(event -> client.getSelfId().map(selfId -> selfId.equals(event.getCurrent().getUserId())))
                 .flatMap(event -> Mono.zip(
                         event.getCurrent().getChannel().map(Possible::of).defaultIfEmpty(Possible.absent()),
                         Mono.fromCallable(() -> getLink(event.getCurrent().getGuildId().asString()))))
