@@ -114,7 +114,7 @@ abstract public class Link {
     /**
      * Disconnects the voice connection (if any) and internally dereferences this {@link Link}.
      * <p>
-     * You should invoke this method your bot leaves a guild.
+     * You should invoke this method when your bot leaves a guild.
      */
     @SuppressWarnings("unused")
     public void destroy() {
@@ -128,6 +128,28 @@ abstract public class Link {
                 // In that case, we are already disconnected
             }
         }
+        setState(State.DESTROYED);
+        lavalink.removeDestroyedLink(this);
+        LavalinkSocket socket = getNode(false);
+        if (socket != null) {
+            socket.send(DataObject.empty()
+                    .put("op", "destroy")
+                    .put("guildId", Long.toString(guild))
+                    .toString());
+        }
+    }
+
+    /**
+     * Disconnects the voice connection (if any) and internally dereferences this {@link Link}.
+     * <p>
+     * You should invoke this method when your bot is retarded.
+     */
+    @SuppressWarnings("unused")
+    public void forceDestroy() {
+        setState(State.DESTROYING);
+
+        queueAudioDisconnect();
+
         setState(State.DESTROYED);
         lavalink.removeDestroyedLink(this);
         LavalinkSocket socket = getNode(false);
