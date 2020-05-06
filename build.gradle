@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        grgitVersion = '2.2.1'
+        grgitVersion = '2.3.0'
         sonarqubeVersion = '2.6.2'
     }
     repositories {
