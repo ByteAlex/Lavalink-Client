@@ -29,6 +29,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.playback.AudioFrame;
 import com.sedmelluq.discord.lavaplayer.track.playback.MutableAudioFrame;
 import lavalink.client.player.event.IPlayerEventListener;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import static com.sedmelluq.discord.lavaplayer.filter.equalizer.Equalizer.BAND_COUNT;
 
@@ -89,6 +90,51 @@ public class LavaplayerPlayerWrapper implements IPlayer {
     @Override
     public int getVolume() {
         return player.getVolume();
+    }
+
+    @Override
+    public void setSpeed(double speed) {
+        throw new NotImplementedException();
+    }
+
+    @Override
+    public double getSpeed() {
+        throw new NotImplementedException();
+    }
+
+    @Override
+    public void setPitch(double pitch) {
+        throw new NotImplementedException();
+    }
+
+    @Override
+    public double getPitch() {
+        throw new NotImplementedException();
+    }
+
+    @Override
+    public void setRate(double rate) {
+        throw new NotImplementedException();
+    }
+
+    @Override
+    public double getRate() {
+        throw new NotImplementedException();
+    }
+
+    @Override
+    public void setTremolo(float frequency, float depth) {
+        throw new NotImplementedException();
+    }
+
+    @Override
+    public float getTremoloFrequency() {
+        throw new NotImplementedException();
+    }
+
+    @Override
+    public float getTremoloDepth() {
+        throw new NotImplementedException();
     }
 
     @Override

@@ -197,6 +197,89 @@ public class LavalinkPlayer implements IPlayer {
     }
 
     @Override
+    public void setSpeed(double speed) {
+        filters.setSpeed(speed);
+
+        LavalinkSocket node = link.getNode(false);
+        if (node == null) return;
+
+        DataObject json = DataObject.empty();
+        json.put("op", "speed");
+        json.put("guildId", link.getGuildId());
+        json.put("speed", speed);
+        node.send(json.toString());
+    }
+
+    @Override
+    public double getSpeed() {
+        return filters.getSpeed();
+    }
+
+    @Override
+    public void setPitch(double pitch) {
+        filters.setPitch(pitch);
+
+        LavalinkSocket node = link.getNode(false);
+        if (node == null) return;
+
+        DataObject json = DataObject.empty();
+        json.put("op", "pitch");
+        json.put("guildId", link.getGuildId());
+        json.put("pitch", pitch);
+        node.send(json.toString());
+    }
+
+    @Override
+    public double getPitch() {
+        return filters.getPitch();
+    }
+
+    @Override
+    public void setRate(double rate) {
+        filters.setRate(rate);
+
+        LavalinkSocket node = link.getNode(false);
+        if (node == null) return;
+
+        DataObject json = DataObject.empty();
+        json.put("op", "rate");
+        json.put("guildId", link.getGuildId());
+        json.put("rate", rate);
+        node.send(json.toString());
+    }
+
+    @Override
+    public double getRate() {
+        return filters.getRate();
+    }
+
+    @Override
+    public void setTremolo(float frequency, float depth) {
+        filters.setTremoloFrequency(frequency);
+        filters.setTremoloDepth(depth);
+
+        LavalinkSocket node = link.getNode(false);
+        if (node == null) return;
+
+        DataObject json = DataObject.empty();
+        json.put("op", "tremolo");
+        json.put("guildId", link.getGuildId());
+        json.put("frequency", frequency);
+        json.put("depth", depth);
+        node.send(json.toString());
+    }
+
+    @Override
+    public float getTremoloFrequency() {
+        return filters.getTremoloFrequency();
+    }
+
+    @Override
+    public float getTremoloDepth() {
+        return filters.getTremoloDepth();
+    }
+
+    @Override
     public void setBand(int band, float gain) {
         filters.setBand(band, gain);
 
