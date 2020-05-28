@@ -140,7 +140,7 @@ public final class LavalinkRestClient {
         };
     }
 
-    CompletableFuture<DataObject> load(final String identifier) {
+    public CompletableFuture<DataObject> load(final String identifier) {
         final CompletableFuture<DataObject> future = new CompletableFuture<>();
         executorService.submit(() -> {
             try {
