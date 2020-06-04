@@ -1,5 +1,6 @@
 package lavalink.client.io.d4j;
 
+import discord4j.common.util.Snowflake;
 import discord4j.core.GatewayDiscordClient;
 import discord4j.core.event.domain.VoiceServerUpdateEvent;
 import discord4j.core.event.domain.VoiceStateUpdateEvent;
@@ -9,7 +10,6 @@ import discord4j.core.event.domain.lifecycle.ReconnectEvent;
 import discord4j.core.object.entity.Guild;
 import discord4j.core.object.entity.channel.VoiceChannel;
 import discord4j.discordjson.possible.Possible;
-import discord4j.rest.util.Snowflake;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import lavalink.client.io.Lavalink;
@@ -94,7 +94,7 @@ public class D4JLavalink extends Lavalink<D4JLink> {
                 .then();
 
         final Mono<Void> voiceStateUpdateEvent = client.on(VoiceStateUpdateEvent.class)
-                .filterWhen(event -> client.getSelfId().map(selfId -> selfId.equals(event.getCurrent().getUserId())))
+                .filter(event -> client.getSelfId().equals(event.getCurrent().getUserId()))
                 .flatMap(event -> Mono.zip(
                         event.getCurrent().getChannel().map(Possible::of).defaultIfEmpty(Possible.absent()),
                         Mono.fromCallable(() -> getLink(event.getCurrent().getGuildId().asString()))))

@@ -1,5 +1,6 @@
 package lavalink.client.io.d4j;
 
+import discord4j.common.util.Snowflake;
 import discord4j.core.object.VoiceState;
 import discord4j.core.object.entity.Guild;
 import discord4j.core.object.entity.Member;
@@ -9,7 +10,6 @@ import discord4j.gateway.GatewayClientGroup;
 import discord4j.gateway.json.ShardGatewayPayload;
 import discord4j.rest.util.Permission;
 import discord4j.rest.util.PermissionSet;
-import discord4j.rest.util.Snowflake;
 import lavalink.client.io.Link;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
