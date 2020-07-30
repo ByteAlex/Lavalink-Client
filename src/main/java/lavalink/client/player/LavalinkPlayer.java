@@ -31,8 +31,8 @@ import lavalink.client.player.event.IPlayerEventListener;
 import lavalink.client.player.event.PlayerEvent;
 import lavalink.client.player.event.PlayerPauseEvent;
 import lavalink.client.player.event.PlayerResumeEvent;
-import net.dv8tion.jda.api.utils.data.DataArray;
-import net.dv8tion.jda.api.utils.data.DataObject;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.List;
@@ -86,7 +86,7 @@ public class LavalinkPlayer implements IPlayer {
             position = track.getPosition();
             TrackData trackData = track.getUserData(TrackData.class);
 
-            DataObject json = DataObject.empty();
+            JSONObject json = new JSONObject();
             json.put("op", "play");
 
             json.put("guildId", link.getGuildId());
@@ -117,7 +117,7 @@ public class LavalinkPlayer implements IPlayer {
 
         LavalinkSocket node = link.getNode(false);
         if (node == null) return;
-        DataObject json = DataObject.empty();
+        JSONObject json = new JSONObject();
         json.put("op", "stop");
         json.put("guildId", link.getGuildId());
         node.send(json.toString());
@@ -128,7 +128,7 @@ public class LavalinkPlayer implements IPlayer {
         if (pause == paused) return;
         LavalinkSocket node = link.getNode(false);
         if (node != null) {
-            DataObject json = DataObject.empty();
+            JSONObject json = new JSONObject();
             json.put("op", "pause");
             json.put("guildId", link.getGuildId());
             json.put("pause", pause);
@@ -168,7 +168,7 @@ public class LavalinkPlayer implements IPlayer {
         if (getPlayingTrack() == null) throw new IllegalStateException("Not currently playing anything");
         if (!getPlayingTrack().isSeekable()) throw new IllegalStateException("Track cannot be seeked");
 
-        DataObject json =  DataObject.empty();
+        JSONObject json = new JSONObject();
         json.put("op", "seek");
         json.put("guildId", link.getGuildId());
         json.put("position", position);
@@ -184,7 +184,7 @@ public class LavalinkPlayer implements IPlayer {
         LavalinkSocket node = link.getNode(false);
         if (node == null) return;
 
-        DataObject json = DataObject.empty();
+        JSONObject json = new JSONObject();
         json.put("op", "volume");
         json.put("guildId", link.getGuildId());
         json.put("volume", volume);
@@ -203,7 +203,7 @@ public class LavalinkPlayer implements IPlayer {
         LavalinkSocket node = link.getNode(false);
         if (node == null) return;
 
-        DataObject json = DataObject.empty();
+        JSONObject json = new JSONObject();
         json.put("op", "speed");
         json.put("guildId", link.getGuildId());
         json.put("speed", speed);
@@ -222,7 +222,7 @@ public class LavalinkPlayer implements IPlayer {
         LavalinkSocket node = link.getNode(false);
         if (node == null) return;
 
-        DataObject json = DataObject.empty();
+        JSONObject json = new JSONObject();
         json.put("op", "pitch");
         json.put("guildId", link.getGuildId());
         json.put("pitch", pitch);
@@ -241,7 +241,7 @@ public class LavalinkPlayer implements IPlayer {
         LavalinkSocket node = link.getNode(false);
         if (node == null) return;
 
-        DataObject json = DataObject.empty();
+        JSONObject json = new JSONObject();
         json.put("op", "rate");
         json.put("guildId", link.getGuildId());
         json.put("rate", rate);
@@ -261,7 +261,7 @@ public class LavalinkPlayer implements IPlayer {
         LavalinkSocket node = link.getNode(false);
         if (node == null) return;
 
-        DataObject json = DataObject.empty();
+        JSONObject json = new JSONObject();
         json.put("op", "tremolo");
         json.put("guildId", link.getGuildId());
         json.put("frequency", frequency);
@@ -287,16 +287,16 @@ public class LavalinkPlayer implements IPlayer {
         if (node == null) return;
 
         float[] bands = filters.getBands();
-        DataArray jsonBands = DataArray.empty();
+        JSONArray jsonBands = new JSONArray();
         for (int i = 0; i < bands.length; i++) {
-            jsonBands.add(
-                DataObject.empty()
+            jsonBands.put(
+                new JSONObject()
                     .put("band", i)
                     .put("gain", bands[i])
             );
         }
 
-        DataObject json = DataObject.empty();
+        JSONObject json = new JSONObject();
         json.put("op", "equalizer");
         json.put("guildId", link.getGuildId());
         json.put("bands", jsonBands);
@@ -308,9 +308,9 @@ public class LavalinkPlayer implements IPlayer {
         return filters.getBands();
     }
 
-    public void provideState(DataObject json) {
+    public void provideState(JSONObject json) {
         updateTime = json.getLong("time");
-        position = json.getLong("position", 0);
+        position = json.getLong("position");
     }
 
     @Override

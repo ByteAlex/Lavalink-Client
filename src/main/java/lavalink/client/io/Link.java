@@ -25,7 +25,7 @@ package lavalink.client.io;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import lavalink.client.player.LavalinkPlayer;
-import net.dv8tion.jda.api.utils.data.DataObject;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
 abstract public class Link {
 
     private static final Logger log = LoggerFactory.getLogger(Link.class);
-    private DataObject lastVoiceServerUpdate = null;
+    private JSONObject lastVoiceServerUpdate = null;
     private String lastSessionId = null;
     private final Lavalink lavalink;
     protected final long guild;
@@ -61,13 +61,6 @@ abstract public class Link {
 
     public Lavalink getLavalink() {
         return lavalink;
-    }
-
-    public LavalinkRestClient getRestClient() {
-        final LavalinkSocket node = getNode(true);
-        if (node == null)
-            throw new IllegalStateException("No available nodes!");
-        return node.getRestClient();
     }
 
     @SuppressWarnings("unused")
@@ -110,7 +103,7 @@ abstract public class Link {
         setState(State.NOT_CONNECTED);
         LavalinkSocket socket = getNode(false);
         if (socket != null && state != State.DESTROYING && state != State.DESTROYED) {
-            socket.send(DataObject.empty()
+            socket.send(new JSONObject()
                     .put("op", "destroy")
                     .put("guildId", Long.toString(guild))
                     .toString());
@@ -139,7 +132,7 @@ abstract public class Link {
         lavalink.removeDestroyedLink(this);
         LavalinkSocket socket = getNode(false);
         if (socket != null) {
-            socket.send(DataObject.empty()
+            socket.send(new JSONObject()
                     .put("op", "destroy")
                     .put("guildId", Long.toString(guild))
                     .toString());
@@ -161,7 +154,7 @@ abstract public class Link {
         lavalink.removeDestroyedLink(this);
         LavalinkSocket socket = getNode(false);
         if (socket != null) {
-            socket.send(DataObject.empty()
+            socket.send(new JSONObject()
                     .put("op", "destroy")
                     .put("guildId", Long.toString(guild))
                     .toString());
@@ -251,12 +244,12 @@ abstract public class Link {
                 '}';
     }
 
-    public void onVoiceServerUpdate(DataObject json, String sessionId) {
+    public void onVoiceServerUpdate(JSONObject json, String sessionId) {
         lastVoiceServerUpdate = json;
         lastSessionId = sessionId;
 
         // Send WS message
-        DataObject out = DataObject.empty();
+        JSONObject out = new JSONObject();
         out.put("op", "voiceUpdate");
         out.put("sessionId", sessionId);
         out.put("guildId", Long.toString(guild));
@@ -267,7 +260,7 @@ abstract public class Link {
         setState(Link.State.CONNECTED);
     }
 
-    public DataObject getLastVoiceServerUpdate() {
+    public JSONObject getLastVoiceServerUpdate() {
         return lastVoiceServerUpdate;
     }
 

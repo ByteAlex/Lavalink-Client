@@ -23,12 +23,12 @@
 package lavalink.client.io;
 
 
-import net.dv8tion.jda.api.utils.data.DataObject;
+import org.json.JSONObject;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class RemoteStats {
 
-    private final DataObject json;
+    private final JSONObject json;
     private final int players;
     private final int playingPlayers;
     private final long uptime; //in millis
@@ -47,24 +47,24 @@ public class RemoteStats {
     private int avgFramesNulledPerMinute = -1;
     private int avgFramesDeficitPerMinute = -1;
 
-    RemoteStats(DataObject json) {
+    RemoteStats(JSONObject json) {
         this.json = json;
         players = json.getInt("players");
         playingPlayers = json.getInt("playingPlayers");
         uptime = json.getLong("uptime");
 
-        DataObject memory = json.getObject("memory");
+        JSONObject memory = json.getJSONObject("memory");
         memFree = memory.getLong("free");
         memUsed = memory.getLong("used");
         memAllocated = memory.getLong("allocated");
         memReservable = memory.getLong("reservable");
 
-        DataObject cpu =  json.getObject("cpu");
+        JSONObject cpu =  json.getJSONObject("cpu");
         cpuCores = cpu.getInt("cores");
         systemLoad = cpu.getInt("systemLoad");
         lavalinkLoad = cpu.getInt("lavalinkLoad");
 
-        DataObject frames = json.hasKey("frameStats") ? json.getObject("frameStats") : null;
+        JSONObject frames = json.has("frameStats") ? json.getJSONObject("frameStats") : null;
 
 
         if (frames != null) {
@@ -74,7 +74,7 @@ public class RemoteStats {
         }
     }
 
-    public DataObject getAsJson() {
+    public JSONObject getAsJson() {
         return json;
     }
 
