@@ -84,9 +84,10 @@ public class LavalinkLoadBalancer {
         @SuppressWarnings("unchecked")
         List<LavalinkSocket> sockets = lavalink.getNodes();
         long otherAvailableNodes = sockets.stream()
-                .filter(node -> node != connected)
-                .filter(LavalinkSocket::isAvailable)
-                .count();
+            .filter(node -> node != connected)
+            .filter(LavalinkSocket::isAvailable)
+            .count();
+
         if (otherAvailableNodes > 0) { //only update links if this is the only connected node
             return;
         }
@@ -111,7 +112,7 @@ public class LavalinkLoadBalancer {
     public static class Penalties {
 
         private LavalinkSocket socket;
-        private final long guild;
+        private final long guildId;
         private int playerPenalty = 0;
         private int cpuPenalty = 0;
         private int deficitFramePenalty = 0;
@@ -119,10 +120,10 @@ public class LavalinkLoadBalancer {
         private int customPenalties = 0;
         private final Lavalink lavalink;
 
-        private Penalties(LavalinkSocket socket, long guild, List<PenaltyProvider> penaltyProviders, Lavalink lavalink) {
+        private Penalties(LavalinkSocket socket, long guildId, List<PenaltyProvider> penaltyProviders, Lavalink lavalink) {
             this.lavalink = lavalink;
             this.socket = socket;
-            this.guild = guild;
+            this.guildId = guildId;
             RemoteStats stats = socket.getStats();
             if (stats == null) return; // Will return as max penalty anyways
             // This will serve as a rule of thumb. 1 playing player = 1 penalty point
@@ -149,21 +150,23 @@ public class LavalinkLoadBalancer {
         private int countPlayingPlayers() {
             //noinspection unchecked
             Collection<Link> links = lavalink.getLinks();
-            Long players = links
-                    .stream().filter(link ->
-                            socket.equals(link.getNode(false)) &&
-                                    link.getPlayer().getPlayingTrack() != null &&
-                                    !link.getPlayer().isPaused())
-                    .count();
-            return players.intValue();
+            return (int) links
+                .stream().filter(link ->
+                    socket.equals(
+                        link.getNode(false)
+                    ) &&
+                        link.getPlayer().getPlayingTrack() != null &&
+                        !link.getPlayer().isPaused()
+                )
+                .count();
         }
 
         public LavalinkSocket getSocket() {
             return socket;
         }
 
-        public long getGuild() {
-            return guild;
+        public long getGuildId() {
+            return guildId;
         }
 
         public int getPlayerPenalty() {
@@ -194,17 +197,17 @@ public class LavalinkLoadBalancer {
         @Override
         public String toString() {
             if (!socket.isAvailable()) return "Penalties{" +
-                    "unavailable=" + (Integer.MAX_VALUE - 1) +
-                    '}';
+                "unavailable=" + (Integer.MAX_VALUE - 1) +
+                '}';
 
             return "Penalties{" +
-                    "total=" + getTotal() +
-                    ", playerPenalty=" + playerPenalty +
-                    ", cpuPenalty=" + cpuPenalty +
-                    ", deficitFramePenalty=" + deficitFramePenalty +
-                    ", nullFramePenalty=" + nullFramePenalty +
-                    ", custom=" + customPenalties +
-                    '}';
+                "total=" + getTotal() +
+                ", playerPenalty=" + playerPenalty +
+                ", cpuPenalty=" + cpuPenalty +
+                ", deficitFramePenalty=" + deficitFramePenalty +
+                ", nullFramePenalty=" + nullFramePenalty +
+                ", custom=" + customPenalties +
+                '}';
         }
     }
 

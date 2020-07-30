@@ -45,6 +45,28 @@ public interface IPlayer {
 
     int getVolume();
 
+    void setSpeed(double speed);
+
+    double getSpeed();
+
+    void setPitch(double pitch);
+
+    double getPitch();
+
+    void setRate(double rate);
+
+    double getRate();
+
+    void setTremolo(float frequency, float depth);
+
+    float getTremoloFrequency();
+
+    float getTremoloDepth();
+
+    void setBand(int band, float gain);
+
+    float[] getBands();
+
     void addListener(IPlayerEventListener listener);
 
     void removeListener(IPlayerEventListener listener);

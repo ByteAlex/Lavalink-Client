@@ -25,7 +25,7 @@ package lavalink.client.io;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import lavalink.client.player.LavalinkPlayer;
-import org.json.JSONObject;
+import net.dv8tion.jda.api.utils.data.DataObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
 abstract public class Link {
 
     private static final Logger log = LoggerFactory.getLogger(Link.class);
-    private JSONObject lastVoiceServerUpdate = null;
+    private DataObject lastVoiceServerUpdate = null;
     private String lastSessionId = null;
     private final Lavalink lavalink;
     protected final long guild;
@@ -83,6 +83,13 @@ abstract public class Link {
         return guild;
     }
 
+    public LavalinkRestClient getRestClient() {
+        final LavalinkSocket node = getNode(true);
+        if (node == null)
+            throw new IllegalStateException("No available nodes!");
+        return node.getRestClient();
+    }
+
     public void disconnect() {
         setState(State.DISCONNECTING);
         queueAudioDisconnect();
@@ -103,7 +110,7 @@ abstract public class Link {
         setState(State.NOT_CONNECTED);
         LavalinkSocket socket = getNode(false);
         if (socket != null && state != State.DESTROYING && state != State.DESTROYED) {
-            socket.send(new JSONObject()
+            socket.send(DataObject.empty()
                     .put("op", "destroy")
                     .put("guildId", Long.toString(guild))
                     .toString());
@@ -114,7 +121,7 @@ abstract public class Link {
     /**
      * Disconnects the voice connection (if any) and internally dereferences this {@link Link}.
      * <p>
-     * You should invoke this method your bot leaves a guild.
+     * You should invoke this method when your bot leaves a guild.
      */
     @SuppressWarnings("unused")
     public void destroy() {
@@ -132,7 +139,29 @@ abstract public class Link {
         lavalink.removeDestroyedLink(this);
         LavalinkSocket socket = getNode(false);
         if (socket != null) {
-            socket.send(new JSONObject()
+            socket.send(DataObject.empty()
+                    .put("op", "destroy")
+                    .put("guildId", Long.toString(guild))
+                    .toString());
+        }
+    }
+
+    /**
+     * Disconnects the voice connection (if any) and internally dereferences this {@link Link}.
+     * <p>
+     * You should invoke this method when your bot is retarded.
+     */
+    @SuppressWarnings("unused")
+    public void forceDestroy() {
+        setState(State.DESTROYING);
+
+        queueAudioDisconnect();
+
+        setState(State.DESTROYED);
+        lavalink.removeDestroyedLink(this);
+        LavalinkSocket socket = getNode(false);
+        if (socket != null) {
+            socket.send(DataObject.empty()
                     .put("op", "destroy")
                     .put("guildId", Long.toString(guild))
                     .toString());
@@ -222,12 +251,12 @@ abstract public class Link {
                 '}';
     }
 
-    public void onVoiceServerUpdate(JSONObject json, String sessionId) {
+    public void onVoiceServerUpdate(DataObject json, String sessionId) {
         lastVoiceServerUpdate = json;
         lastSessionId = sessionId;
 
         // Send WS message
-        JSONObject out = new JSONObject();
+        DataObject out = DataObject.empty();
         out.put("op", "voiceUpdate");
         out.put("sessionId", sessionId);
         out.put("guildId", Long.toString(guild));
@@ -238,7 +267,7 @@ abstract public class Link {
         setState(Link.State.CONNECTED);
     }
 
-    public JSONObject getLastVoiceServerUpdate() {
+    public DataObject getLastVoiceServerUpdate() {
         return lastVoiceServerUpdate;
     }
 

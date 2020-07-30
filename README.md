@@ -1,4 +1,6 @@
-# Lavalink Client [![Release](https://img.shields.io/github/tag/FredBoat/Lavalink-Client.svg)](https://jitpack.io/#FredBoat/Lavalink-Client)
+## Original jitpack [![Release](https://img.shields.io/github/tag/FredBoat/Lavalink-Client.svg)](https://jitpack.io/#FredBoat/Lavalink-Client)
+
+# Lavalink Client Fork [![Release](https://img.shields.io/github/tag/ToxicMushroom/Lavalink-Client.svg)](https://jitpack.io/#ToxicMushroom/Lavalink-Client)
 
 ## Installation
 Lavalink does not have a maven repository and instead uses Jitpack.
@@ -7,6 +9,14 @@ You can add the following to your POM if you're using Maven:
 <dependencies>
     <dependency>
         <groupId>com.github.FredBoat</groupId>
+        <artifactId>Lavalink-Client</artifactId>
+        <version>x.y.z</version>
+    </dependency>
+</dependencies>
+<!-- or -->
+<dependencies>
+    <dependency>
+        <groupId>com.github.ToxicMushroom</groupId>
         <artifactId>Lavalink-Client</artifactId>
         <version>x.y.z</version>
     </dependency>
@@ -30,7 +40,9 @@ Or Gradle:
     }
 
     dependencies {
-        compile group: 'com.github.FredBoat', name: 'Lavalink-Client', version: 'x.y.z'
+        implementation group: 'com.github.FredBoat', name: 'Lavalink-Client', version: 'x.y.z'
+        //or
+        implementation group: 'com.github.ToxicMushroom', name: 'Lavalink-Client', version: 'x.y.z'
     }
 ```
 
@@ -41,10 +53,15 @@ Jitpack versioning is based on git branches and commit hashes, or tags. Eg:
 ab123c4d
 master-SNAPSHOT
 dev-SNAPSHOT
-3.0
+3.2
 ```
 
+***Note:*** The above versions are for example purposes only.
+
 Version tags of this client are expected to roughly follow lavalink server versioning.
+
+## Migrating from v3 to v4
+Version 4 drops JDA3 support in favour of JDA4. This uses a non-internal JDA API to intercept voice handling. This requires adding an interceptor to your `JDABuilder` or `DefaultShardManagerBuilder`. See examples of using `#setVoiceDispatchInterceptor` below.
 
 ## Migrating from v2 to v3
 The v3 client has been made to be generic, meaning that the base client can now be used without JDA.
