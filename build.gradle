@@ -48,7 +48,7 @@ ext {
     javaWebSocketVersion        = '1.5.1'
     slf4jVersion                = '1.7.25'
     jsonOrgVersion              = '20180130'
-    jdaVersion                  = '4.1.1_135'
+    jdaVersion                  = '370989195a4da638c11d27378594ae272cf38636'
     spotbugsAnnotationsVersion  = '3.1.3'
     prometheusVersion           = '0.4.0'
 
@@ -66,8 +66,8 @@ dependencies {
     compile group: 'org.java-websocket', name: 'Java-WebSocket', version: javaWebSocketVersion
     compile group: 'org.slf4j', name: 'slf4j-api', version: slf4jVersion
     compile group: 'org.json', name: 'json', version: jsonOrgVersion
-    compileOnly group: 'net.dv8tion', name: 'JDA', version: jdaVersion
-    testCompile group: 'net.dv8tion', name: 'JDA', version: jdaVersion
+    compileOnly group: 'com.github.pylonbot.pylon-gateway-client-java', name: 'pylon-gateway-client', version: jdaVersion
+    testCompile group: 'com.github.pylonbot.pylon-gateway-client-java', name: 'pylon-gateway-client', version: jdaVersion
     compileOnly group: 'com.github.spotbugs', name: 'spotbugs-annotations', version: spotbugsAnnotationsVersion
     compileOnly group: 'io.prometheus', name: 'simpleclient', version: prometheusVersion
     testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: junitJupiterVersion
@@ -96,18 +96,6 @@ wrapper {
 build {
     doLast {
         println 'Version: ' + version
-    }
-}
-
-
-test {
-    useJUnitPlatform()
-
-    systemProperty("TEST_TOKEN", System.getProperty("TEST_TOKEN"))
-    systemProperty("TEST_VOICE_CHANNEL", System.getProperty("TEST_VOICE_CHANNEL"))
-
-    jacoco {
-        includes['lavalink.client.*']
     }
 }
 
