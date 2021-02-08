@@ -83,7 +83,7 @@ public class PylonLink extends Link {
 
     @Override
     public void removeConnection() {
-        // JDA handles this for us
+        // todo: does pylon handle that for us?
     }
 
     @Override
@@ -91,7 +91,7 @@ public class PylonLink extends Link {
         Guild g = getClient().getCacheService().getGuild(guild).complete();
 
         if (g != null) {
-            // todo: disconnect request
+            g.disconnectVoice().queue();
         } else {
             log.warn("Attempted to disconnect, but guild {} was not found", guild);
         }
@@ -100,11 +100,11 @@ public class PylonLink extends Link {
     @Override
     protected void queueAudioConnect(long channelId) {
         final Channel vc = getClient().getCacheService().getChannel(guild, channelId).complete();
-        if (vc.getType() != ChannelData.ChannelType.GUILD_VOICE) {
+        if (vc != null && vc.getType() != ChannelData.ChannelType.GUILD_VOICE) {
             throw new IllegalArgumentException("Not a voice channel!");
         }
         if (vc != null) {
-            // todo: connect request
+            vc.connectVoice().queue();
         } else {
             log.warn("Attempted to connect, but voice channel {} was not found", channelId);
         }
