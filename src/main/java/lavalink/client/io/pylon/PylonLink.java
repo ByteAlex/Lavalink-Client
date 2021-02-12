@@ -46,27 +46,26 @@ public class PylonLink extends Link {
 
         //If we are already connected to this VoiceChannel, then do nothing.
         MemberVoiceState voiceState = self.getVoiceState().complete();
-        if (voiceState == null) {
-            return;
-        }
+        if(voiceState != null) {
 
-        if (checkChannel && channel.getId() == voiceState.getChannel().complete().getId()) {
-            return;
-        }
+            if (checkChannel && channel.getId() == voiceState.getChannel().complete().getId()) {
+                return;
+            }
 
-        if (voiceState.isInVoiceChannel()) {
-            final int userLimit = channel.getData().getUserLimit(); // userLimit is 0 if no limit is set!
-            if (!self.isOwner().complete() && !self.hasPermission(Permission.ADMINISTRATOR)) {
-                if (userLimit > 0                                                      // If there is a userlimit
-                        && userLimit <= channel.getMembers().complete().size()                    // if that
-                        // userlimit is reached
-                        && !self.hasPermission(channel, Permission.MOVE_MEMBERS)) // If we don't have voice move
-                // others permissions
-                {
+            if (voiceState.isInVoiceChannel()) {
+                final int userLimit = channel.getData().getUserLimit(); // userLimit is 0 if no limit is set!
+                if (!self.isOwner().complete() && !self.hasPermission(Permission.ADMINISTRATOR)) {
+                    if (userLimit > 0                                                      // If there is a userlimit
+                            && userLimit <= channel.getMembers().complete().size()                    // if that
+                            // userlimit is reached
+                            && !self.hasPermission(channel, Permission.MOVE_MEMBERS)) // If we don't have voice move
+                    // others permissions
+                    {
                     /*throw new InsufficientPermissionException(channel, Permission.MOVE_MEMBERS, // then throw exception!
                             "Unable to connect to VoiceChannel due to userlimit! Requires permission " +
                                     "VOICE_MOVE_OTHERS to bypass");*/
-                    throw new RuntimeException("Missing move_members permission!");
+                        throw new RuntimeException("Missing move_members permission!");
+                    }
                 }
             }
         }
