@@ -6,6 +6,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import lavalink.client.io.Link;
 import lol.up.pylon.gateway.client.GatewayGrpcClient;
 import lol.up.pylon.gateway.client.entity.*;
+import lol.up.pylon.gateway.client.exception.InsufficientPermissionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +42,7 @@ public class PylonLink extends Link {
         final Member self = channel.getGuild().flatTransform(Guild::getSelfMember).complete();
         if (!self.hasPermission(channel, Permission.CONNECT) && !self.hasPermission(channel, Permission.MOVE_MEMBERS)) {
             //throw new InsufficientPermissionException(channel, Permission.CONNECT);
-            throw new RuntimeException("Missing connect permission!");
+            throw new InsufficientPermissionException(Permission.CONNECT);
         }
 
         //If we are already connected to this VoiceChannel, then do nothing.
@@ -64,7 +65,7 @@ public class PylonLink extends Link {
                     /*throw new InsufficientPermissionException(channel, Permission.MOVE_MEMBERS, // then throw exception!
                             "Unable to connect to VoiceChannel due to userlimit! Requires permission " +
                                     "VOICE_MOVE_OTHERS to bypass");*/
-                        throw new RuntimeException("Missing move_members permission!");
+                        throw new InsufficientPermissionException(Permission.MOVE_MEMBERS);
                     }
                 }
             }
