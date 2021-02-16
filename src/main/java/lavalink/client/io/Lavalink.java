@@ -33,11 +33,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class Lavalink<T extends Link> {
@@ -83,19 +79,29 @@ public abstract class Lavalink<T extends Link> {
     }
 
     /**
-     *
-     * @param name
-     *         A name to identify this node. May show up in metrics and other places.
-     * @param serverUri
-     *         uri of the node to be added
-     * @param password
-     *         password of the node to be added
+     * @param name A name to identify this node. May show up in metrics and other places.
+     * @param serverUri uri of the node to be added
+     * @param password password of the node to be added
      * @throws IllegalStateException if no userId has been set.
      * @throws IllegalArgumentException if a node with that name already exists.
      * @see #setUserId(String)
      */
     @SuppressWarnings("WeakerAccess")
     public void addNode(@NonNull String name, @NonNull URI serverUri, @NonNull String password) {
+        addNode(name, serverUri, password, null);
+    }
+
+    /**
+     * @param name A name to identify this node. May show up in metrics and other places.
+     * @param serverUri uri of the node to be added
+     * @param password password of the node to be added
+     * @throws IllegalStateException if no userId has been set.
+     * @throws IllegalArgumentException if a node with that name already exists.
+     * @see #setUserId(String)
+     */
+    @SuppressWarnings("WeakerAccess")
+    public void addNode(@NonNull String name, @NonNull URI serverUri, @NonNull String password,
+                        @Nullable String resumeKey) {
         if (userId == null) {
             throw new IllegalStateException("We need a userId to connect to Lavalink");
         }
@@ -109,6 +115,9 @@ public abstract class Lavalink<T extends Link> {
         headers.put("Num-Shards", Integer.toString(numShards));
         headers.put("User-Id", userId);
         headers.put("Client-Name", "Lavalink-Client");
+        if (resumeKey != null) {
+            headers.put("Resume-Key", resumeKey);
+        }
 
         LavalinkSocket socket = new LavalinkSocket(name, this, serverUri, new Draft_6455(), headers);
         socket.connect();
@@ -167,6 +176,7 @@ public abstract class Lavalink<T extends Link> {
 
     /**
      * The user id of this bot.
+     *
      * @throws IllegalStateException if any nodes are registered.
      */
     @SuppressWarnings("unused")

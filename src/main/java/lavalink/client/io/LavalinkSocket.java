@@ -28,7 +28,10 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import lavalink.client.LavalinkUtil;
 import lavalink.client.player.LavalinkPlayer;
-import lavalink.client.player.event.*;
+import lavalink.client.player.event.PlayerEvent;
+import lavalink.client.player.event.TrackEndEvent;
+import lavalink.client.player.event.TrackExceptionEvent;
+import lavalink.client.player.event.TrackStuckEvent;
 import org.java_websocket.drafts.Draft;
 import org.java_websocket.handshake.ServerHandshake;
 import org.json.JSONObject;
@@ -61,10 +64,13 @@ public class LavalinkSocket extends ReusableWebSocket {
     private final URI remoteUri;
     private final LavalinkRestClient restClient;
     private boolean available = false;
+    private String resumeKey;
 
-    LavalinkSocket(@NonNull String name, @NonNull Lavalink<?> lavalink, @NonNull URI serverUri, Draft protocolDraft, Map<String, String> headers) {
+    LavalinkSocket(@NonNull String name, @NonNull Lavalink<?> lavalink, @NonNull URI serverUri, Draft protocolDraft,
+                   Map<String, String> headers) {
         super(serverUri, protocolDraft, headers, TIMEOUT_MS);
         this.name = name;
+        this.resumeKey = headers.get("Resume-Key");
         this.password = headers.get("Authorization");
         this.lavalink = lavalink;
         this.remoteUri = serverUri;
@@ -82,6 +88,9 @@ public class LavalinkSocket extends ReusableWebSocket {
         available = true;
         lavalink.loadBalancer.onNodeConnect(this);
         reconnectsAttempted = 0;
+        if(resumeKey != null) {
+            configureResuming();
+        }
     }
 
     @Override
@@ -116,7 +125,8 @@ public class LavalinkSocket extends ReusableWebSocket {
 
     /**
      * Implementation details:
-     * The only events extending {@link lavalink.client.player.event.PlayerEvent} produced by the remote server are these:
+     * The only events extending {@link lavalink.client.player.event.PlayerEvent} produced by the remote server are
+     * these:
      * 1. TrackEndEvent
      * 2. TrackExceptionEvent
      * 3. TrackStuckEvent
@@ -174,7 +184,9 @@ public class LavalinkSocket extends ReusableWebSocket {
                 break;
         }
 
-        if (event != null) player.emitEvent(event);
+        if (event != null) {
+            player.emitEvent(event);
+        }
     }
 
     @Override
@@ -192,7 +204,8 @@ public class LavalinkSocket extends ReusableWebSocket {
     @Override
     public void onError(Exception ex) {
         if (ex instanceof ConnectException) {
-            log.warn("Failed to connect to " + getRemoteUri() + ", retrying in " + getReconnectInterval()/1000 + " seconds.");
+            log.warn("Failed to connect to " + getRemoteUri() + ", retrying in " + getReconnectInterval() / 1000 + " " +
+                    "seconds.");
             return;
         }
 
@@ -219,6 +232,13 @@ public class LavalinkSocket extends ReusableWebSocket {
         lastReconnectAttempt = System.currentTimeMillis();
         reconnectsAttempted++;
         connect();
+    }
+
+    private void configureResuming() {
+        send(new JSONObject()
+                .put("op", "configureResuming")
+                .put("key", resumeKey)
+                .toString());
     }
 
     long getReconnectInterval() {
