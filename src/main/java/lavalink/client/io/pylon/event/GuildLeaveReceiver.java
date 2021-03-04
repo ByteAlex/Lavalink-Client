@@ -18,7 +18,7 @@ public class GuildLeaveReceiver extends AbstractEventReceiver<GuildMemberRemoveE
         if(event.getMember().getId() != event.getBotId()) {
             return;
         }
-        final PylonLink link = lavalink.getExistingLink(event.getGuild().complete());
+        final PylonLink link = lavalink.getExistingLink(String.valueOf(event.getGuildId()));
         if (link != null) {
             link.removeConnection();
         }
