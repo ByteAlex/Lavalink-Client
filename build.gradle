@@ -48,7 +48,7 @@ ext {
     javaWebSocketVersion        = '1.5.1'
     slf4jVersion                = '1.7.25'
     jsonOrgVersion              = '20180130'
-    jdaVersion                  = 'cec970ecb6475268bbe3d0851cb5d9c703f6a7a7'
+    jdaVersion                  = '3bf67e64374586744f4edb41248a6bd9bb3fd23f'
     spotbugsAnnotationsVersion  = '3.1.3'
     prometheusVersion           = '0.4.0'
 
