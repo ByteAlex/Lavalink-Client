@@ -198,7 +198,7 @@ public abstract class Lavalink<T extends Link> {
     }
 
     @SuppressWarnings("WeakerAccess")
-    protected Map<String, T> getLinksMap() {
+    public Map<String, T> getLinksMap() {
         return links;
     }
 

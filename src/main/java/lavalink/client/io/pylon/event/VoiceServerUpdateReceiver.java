@@ -2,7 +2,10 @@ package lavalink.client.io.pylon.event;
 
 import bot.pylon.proto.discord.v1.model.VoiceStateData;
 import com.google.protobuf.StringValue;
+import lavalink.client.io.Link;
 import lavalink.client.io.pylon.PylonLavalink;
+import lavalink.client.io.pylon.PylonLink;
+import lol.up.pylon.gateway.client.entity.Channel;
 import lol.up.pylon.gateway.client.entity.Guild;
 import lol.up.pylon.gateway.client.entity.Member;
 import lol.up.pylon.gateway.client.entity.MemberVoiceState;
@@ -32,6 +35,14 @@ public class VoiceServerUpdateReceiver extends AbstractEventReceiver<VoiceServer
                 .put("token", event.getToken())
                 .put("endpoint", event.getEndpoint());
 
-        lavalink.getLink(guild).onVoiceServerUpdate(raw, sessionId);
+        final PylonLink link = lavalink.getLink(guild);
+        link.onVoiceServerUpdate(raw, sessionId);
+        if (link.getState() == Link.State.CONNECTED) {
+            guild.getSelfMember()
+                    .flatTransform(Member::getVoiceState)
+                    .flatTransform(MemberVoiceState::getChannel)
+                    .flatTransform(Channel::connectVoice)
+                    .queue();
+        }
     }
 }

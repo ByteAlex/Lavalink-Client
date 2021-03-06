@@ -33,7 +33,7 @@ public class PylonLink extends Link {
      * @param channel Channel to connect to
      */
     @SuppressWarnings("WeakerAccess")
-    void connect(@NonNull Channel channel, boolean checkChannel) {
+    public void connect(@NonNull Channel channel, boolean checkChannel) {
         if (channel.getGuildId() != guild) {
             throw new IllegalArgumentException("The provided VoiceChannel is not a part of the Guild that this " +
                     "AudioManager handles." +
