@@ -28,11 +28,11 @@ package lavalink.client.player;
  */
 public class TrackData {
 
-    public final long startPos;
-    public final long endPos;
+    public final long id;
+    public final long authorId;
 
-    public TrackData(long startPos, long endPos) {
-        this.startPos = startPos;
-        this.endPos = endPos;
+    public TrackData(long id, long authorId) {
+        this.id = id;
+        this.authorId = authorId;
     }
 }
