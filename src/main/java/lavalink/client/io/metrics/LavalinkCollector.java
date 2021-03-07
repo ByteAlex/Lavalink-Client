@@ -8,7 +8,6 @@ import lavalink.client.io.LavalinkSocket;
 import lavalink.client.io.RemoteStats;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
