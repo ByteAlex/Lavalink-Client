@@ -30,21 +30,32 @@ public class TrackData {
 
     public final long id;
     public final long authorId;
+    public final long startPos;
+    public final long endPos;
 
-    public TrackData(long id, long authorId) {
+    public TrackData(long id, long authorId, long startPos, long endPos) {
         this.id = id;
         this.authorId = authorId;
+        this.startPos = startPos;
+        this.endPos = endPos;
     }
 
     @Override
     public String toString() {
-        return id + "," + authorId;
+        return id + "," + authorId + "," + startPos + "," + endPos;
     }
 
     static public TrackData createFromString(String stringTrackData) {
         String[] parts = stringTrackData.split(",");
         long id = Long.parseLong(parts[0]);
         long authorId = Long.parseLong(parts[1]);
-        return new TrackData(id, authorId);
+        long startTime = Long.parseLong(parts[0]);
+        long endTime = Long.parseLong(parts[1]);
+        return new TrackData(
+                id,
+                authorId,
+                startTime,
+                endTime
+        );
     }
 }
