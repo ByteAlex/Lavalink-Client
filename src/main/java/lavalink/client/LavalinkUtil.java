@@ -88,10 +88,14 @@ public class LavalinkUtil {
      */
     @SuppressWarnings("WeakerAccess")
     public static AudioTrack toAudioTrack(byte[] message) throws IOException {
-        ByteArrayInputStream bais = new ByteArrayInputStream(message);
-        MessageInput input = new MessageInput(bais);
-        AudioTrack track = PLAYER_MANAGER.decodeTrack(input).decodedTrack;
-        DataInput bytes = input.nextMessage();
+        final ByteArrayInputStream bais = new ByteArrayInputStream(message);
+        final MessageInput input = new MessageInput(bais);
+        final AudioTrack track = PLAYER_MANAGER.decodeTrack(input).decodedTrack;
+        DataInput bytes = null;
+        try {
+            bytes = input.nextMessage();
+        } catch (EOFException ignored) {}
+
         if (bytes != null) {
             TrackData userData = TrackData.createFromString(bytes.readUTF());
             track.setUserData(userData);
