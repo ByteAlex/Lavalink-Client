@@ -169,14 +169,10 @@ public class LavalinkPlayer implements IPlayer {
         link.getNode(true).send(json.toString());
     }
 
-    /**
-     * @deprecated Please use the new filters system to specify volume
-     * @see LavalinkPlayer#getFilters()
-     */
     @Override
     public void setVolume(int volume) {
         if (filters == null && volume == 100) return;
-        getFilters().setVolume(volume / 100).commit();
+        getFilters().setVolume(volume / 100f).commit();
     }
 
     /**
@@ -184,7 +180,6 @@ public class LavalinkPlayer implements IPlayer {
      * @see LavalinkPlayer#getFilters()
      */
     @Override
-    @Deprecated
     public int getVolume() {
         return (int) (getFilters().getVolume() * 100);
     }
