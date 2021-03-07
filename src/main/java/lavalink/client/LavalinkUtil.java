@@ -34,10 +34,9 @@ import com.sedmelluq.discord.lavaplayer.tools.io.MessageInput;
 import com.sedmelluq.discord.lavaplayer.tools.io.MessageOutput;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import lavalink.client.player.LavalinkPlayer;
+import lavalink.client.player.TrackData;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.Base64;
 
 public class LavalinkUtil {
@@ -92,7 +91,12 @@ public class LavalinkUtil {
     @SuppressWarnings("WeakerAccess")
     public static AudioTrack toAudioTrack(byte[] message) throws IOException {
         ByteArrayInputStream bais = new ByteArrayInputStream(message);
-        return PLAYER_MANAGER.decodeTrack(new MessageInput(bais)).decodedTrack;
+        MessageInput input = new MessageInput(bais);
+        AudioTrack track = PLAYER_MANAGER.decodeTrack(input).decodedTrack;
+        DataInput bytes = input.nextMessage();
+        TrackData userData = TrackData.createFromString(bytes.readUTF());
+        track.setUserData(userData);
+        return track;
     }
 
     /**
@@ -112,9 +116,16 @@ public class LavalinkUtil {
     @SuppressWarnings("WeakerAccess")
     public static byte[] toBinary(AudioTrack track) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        PLAYER_MANAGER.encodeTrack(new MessageOutput(baos), track);
+        MessageOutput output = new MessageOutput(baos);
+        PLAYER_MANAGER.encodeTrack(output, track);
+        DataOutput dataOutput = output.startMessage();
+        String stringedTrackData = track.getUserData(TrackData.class).toString();
+        dataOutput.writeUTF(stringedTrackData);
+        output.commitMessage();
         return baos.toByteArray();
     }
+
+
 
     public static int getShardFromSnowflake(String snowflake, int numShards) {
         return (int) ((Long.parseLong(snowflake) >> 22) % numShards);

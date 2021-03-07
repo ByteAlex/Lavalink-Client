@@ -35,4 +35,16 @@ public class TrackData {
         this.id = id;
         this.authorId = authorId;
     }
+
+    @Override
+    public String toString() {
+        return id + "," + authorId;
+    }
+
+    static public TrackData createFromString(String stringTrackData) {
+        String[] parts = stringTrackData.split(",");
+        long id = Long.parseLong(parts[0]);
+        long authorId = Long.parseLong(parts[1]);
+        return new TrackData(id, authorId);
+    }
 }
