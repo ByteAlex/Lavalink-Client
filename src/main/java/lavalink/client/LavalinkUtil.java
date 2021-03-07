@@ -56,13 +56,12 @@ public class LavalinkUtil {
     }
 
     /**
-     *
-     * @param player the lavalink player that holds the track with data
+     * @param player  the lavalink player that holds the track with data
      * @param message the Base64 audio track
      * @return the AudioTrack with the user data stored in the player
      * @throws IOException if there is an IO problem
      */
-    public static AudioTrack toAudioTrackWithData(LavalinkPlayer player, String message) throws IOException{
+    public static AudioTrack toAudioTrackWithData(LavalinkPlayer player, String message) throws IOException {
         AudioTrack storedTrack = player.getPlayingTrack();
         AudioTrack messageTrack = toAudioTrack(message);
 
@@ -74,7 +73,6 @@ public class LavalinkUtil {
     }
 
     /**
-     *
      * @param message the Base64 audio track
      * @return the AudioTrack
      * @throws IOException if there is an IO problem
@@ -94,8 +92,10 @@ public class LavalinkUtil {
         MessageInput input = new MessageInput(bais);
         AudioTrack track = PLAYER_MANAGER.decodeTrack(input).decodedTrack;
         DataInput bytes = input.nextMessage();
-        TrackData userData = TrackData.createFromString(bytes.readUTF());
-        track.setUserData(userData);
+        if (bytes != null) {
+            TrackData userData = TrackData.createFromString(bytes.readUTF());
+            track.setUserData(userData);
+        }
         return track;
     }
 
@@ -118,13 +118,16 @@ public class LavalinkUtil {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         MessageOutput output = new MessageOutput(baos);
         PLAYER_MANAGER.encodeTrack(output, track);
-        DataOutput dataOutput = output.startMessage();
-        String stringedTrackData = track.getUserData(TrackData.class).toString();
-        dataOutput.writeUTF(stringedTrackData);
-        output.commitMessage();
+
+        final TrackData userData = track.getUserData(TrackData.class);
+        if (userData != null) {
+            DataOutput dataOutput = output.startMessage();
+            String stringedTrackData = userData.toString();
+            dataOutput.writeUTF(stringedTrackData);
+            output.commitMessage();
+        }
         return baos.toByteArray();
     }
-
 
 
     public static int getShardFromSnowflake(String snowflake, int numShards) {
