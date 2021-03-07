@@ -10,14 +10,16 @@ public class RemotePlayerInfo {
     final AudioTrack playing;
     final boolean paused;
     final long position;
+    final long updateTime;
 
     @Nullable
     final AudioTrack lastTrack;
 
-    public RemotePlayerInfo(@Nullable AudioTrack playing, boolean paused, long position, @Nullable AudioTrack lastTrack) {
+    public RemotePlayerInfo(@Nullable AudioTrack playing, boolean paused, long position, long updateTime, @Nullable AudioTrack lastTrack) {
         this.playing = playing;
         this.paused = paused;
         this.position = position;
+        this.updateTime = updateTime;
         this.lastTrack = lastTrack;
     }
 
@@ -27,6 +29,10 @@ public class RemotePlayerInfo {
 
     public long getPosition() {
         return position;
+    }
+
+    public long getUpdateTime() {
+        return updateTime;
     }
 
     @Nullable

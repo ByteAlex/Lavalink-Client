@@ -98,11 +98,13 @@ public final class LavalinkRestClient {
 
                 boolean paused = response.getBoolean("paused");
                 long position = response.getLong("position");
+                long updatedTime = response.getLong("updateTime");
 
                 return new RemotePlayerInfo(
                                 playingTrack,
                                 paused,
                                 position,
+                                updatedTime,
                                 lastTrack
                         );
             } catch (IOException e) {
