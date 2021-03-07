@@ -25,13 +25,13 @@ package lavalink.client.io;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
-import com.sedmelluq.discord.lavaplayer.player.FunctionalResultHandler;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.BasicAudioPlaylist;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import lavalink.client.LavalinkUtil;
+import lavalink.client.player.RemotePlayerInfo;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
@@ -72,6 +72,44 @@ public final class LavalinkRestClient {
 
     public void setHttpClientBuilder(final Consumer<HttpClientBuilder> clientBuilder) {
         this.builderConsumer = clientBuilder;
+    }
+
+
+    @NonNull
+    public CompletableFuture<RemotePlayerInfo> getPlayerInfo(final String botId, final String guildId) {
+        String url = socket.getRemoteUri().toString()
+                .replaceFirst("ws://", "http://")
+                .replaceFirst("wss://", "https://") + "/playerinfo?botId=" + botId + "&guildId=" + guildId;
+
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                JSONObject response = apiGet(url, socket.getPassword());
+                String playingTrackData = response.getString("playing");
+                AudioTrack playingTrack = null;
+                if (!playingTrackData.equals("null")) {
+                    playingTrack = LavalinkUtil.toAudioTrack(playingTrackData);
+                }
+
+                String lastTrackData = response.getString("lastTrack");
+                AudioTrack lastTrack = null;
+                if (!lastTrackData.equals("null")) {
+                    lastTrack = LavalinkUtil.toAudioTrack(lastTrackData);
+                }
+
+                boolean paused = response.getBoolean("paused");
+                long position = response.getLong("position");
+
+                return new RemotePlayerInfo(
+                                playingTrack,
+                                paused,
+                                position,
+                                lastTrack
+                        );
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
+        });
     }
 
     /**
