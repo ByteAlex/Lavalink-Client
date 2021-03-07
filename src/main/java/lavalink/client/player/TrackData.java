@@ -49,8 +49,8 @@ public class TrackData {
         String[] parts = stringTrackData.split(",");
         long id = Long.parseLong(parts[0]);
         long authorId = Long.parseLong(parts[1]);
-        long startTime = Long.parseLong(parts[0]);
-        long endTime = Long.parseLong(parts[1]);
+        long startTime = Long.parseLong(parts[2]);
+        long endTime = Long.parseLong(parts[3]);
         return new TrackData(
                 id,
                 authorId,
