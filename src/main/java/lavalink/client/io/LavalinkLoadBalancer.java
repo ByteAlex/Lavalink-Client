@@ -79,6 +79,7 @@ public class LavalinkLoadBalancer {
                 if (disconnected.equals(link.getNode(false)))
                     link.changeNode(lavalink.loadBalancer.determineBestSocket(link.getGuildIdLong()));
             } catch (IllegalStateException e) {
+
                 // No available nodes
                 link.getPlayer().noNodes();
             }
