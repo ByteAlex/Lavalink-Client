@@ -85,7 +85,7 @@ public class LavalinkSocket extends ReusableWebSocket {
         available = true;
         lavalink.loadBalancer.onNodeConnect(this);
         reconnectsAttempted = 0;
-        if(resumeKey != null) {
+        if (resumeKey != null) {
             configureResuming();
         }
     }

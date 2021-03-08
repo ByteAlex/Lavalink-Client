@@ -99,10 +99,8 @@ public class LavalinkLoadBalancer {
         @SuppressWarnings("unchecked")
         Collection<Link> links = lavalink.getLinks();
         links.forEach(link -> {
-            if (link.getNode(false) == null) {
-                link.changeNode(connected);
-                link.getPlayer().yesNodes();
-            }
+            link.changeNode(connected);
+            link.getPlayer().yesNodes();
         });
     }
 
