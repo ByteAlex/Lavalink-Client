@@ -32,12 +32,22 @@ public class TrackData {
     public final long authorId;
     public final long startPos;
     public final long endPos;
+    public boolean initialisedPositions;
 
     public TrackData(long id, long authorId, long startPos, long endPos) {
         this.id = id;
         this.authorId = authorId;
         this.startPos = startPos;
         this.endPos = endPos;
+        this.initialisedPositions = true;
+    }
+
+    public TrackData(long id, long authorId) {
+        this.id = id;
+        this.authorId = authorId;
+        this.startPos = 0;
+        this.endPos = -1;
+        this.initialisedPositions = false;
     }
 
     @Override
