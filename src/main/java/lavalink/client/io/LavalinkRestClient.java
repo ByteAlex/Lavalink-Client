@@ -84,7 +84,13 @@ public final class LavalinkRestClient {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 JSONObject response = apiGet(url, socket.getPassword());
-                if (!response.has("playing")) return null;
+                if (!response.has("playing")) return new RemotePlayerInfo(
+                        null,
+                        false,
+                        0,
+                        System.currentTimeMillis(),
+                        null
+                );
                 String playingTrackData = response.getString("playing");
                 AudioTrack playingTrack = null;
                 if (!playingTrackData.equals("null")) {
@@ -110,7 +116,13 @@ public final class LavalinkRestClient {
                 );
             } catch (IOException e) {
                 e.printStackTrace();
-                return null;
+                return new RemotePlayerInfo(
+                        null,
+                        false,
+                        0,
+                        System.currentTimeMillis(),
+                        null
+                );
             }
         });
     }
