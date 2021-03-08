@@ -75,8 +75,13 @@ public class LavalinkLoadBalancer {
         //noinspection unchecked
         Collection<Link> links = lavalink.getLinks();
         links.forEach(link -> {
-            if (disconnected.equals(link.getNode(false)))
-                link.changeNode(lavalink.loadBalancer.determineBestSocket(link.getGuildIdLong()));
+            try {
+                if (disconnected.equals(link.getNode(false)))
+                    link.changeNode(lavalink.loadBalancer.determineBestSocket(link.getGuildIdLong()));
+            } catch (IllegalArgumentException e) {
+                // No available nodes
+                link.getPlayer().noNodes();
+            }
         });
     }
 
@@ -93,8 +98,10 @@ public class LavalinkLoadBalancer {
         @SuppressWarnings("unchecked")
         Collection<Link> links = lavalink.getLinks();
         links.forEach(link -> {
-            if (link.getNode(false) == null)
+            if (link.getNode(false) == null) {
                 link.changeNode(connected);
+                link.getPlayer().yesNodes();
+            }
         });
     }
 

@@ -28,10 +28,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import lavalink.client.LavalinkUtil;
 import lavalink.client.player.LavalinkPlayer;
-import lavalink.client.player.event.PlayerEvent;
-import lavalink.client.player.event.TrackEndEvent;
-import lavalink.client.player.event.TrackExceptionEvent;
-import lavalink.client.player.event.TrackStuckEvent;
+import lavalink.client.player.event.*;
 import org.java_websocket.drafts.Draft;
 import org.java_websocket.handshake.ServerHandshake;
 import org.json.JSONObject;
@@ -64,7 +61,7 @@ public class LavalinkSocket extends ReusableWebSocket {
     private final URI remoteUri;
     private final LavalinkRestClient restClient;
     private boolean available = false;
-    private String resumeKey;
+    private final String resumeKey;
 
     LavalinkSocket(@NonNull String name, @NonNull Lavalink<?> lavalink, @NonNull URI serverUri, Draft protocolDraft,
                    Map<String, String> headers) {
@@ -139,10 +136,11 @@ public class LavalinkSocket extends ReusableWebSocket {
 
         switch (json.getString("type")) {
             case "TrackStartEvent":
+                event = new TrackStartEvent(player, LavalinkUtil.toAudioTrack(json.getString("track")));
                 break;
             case "TrackEndEvent":
                 event = new TrackEndEvent(player,
-                        LavalinkUtil.toAudioTrackWithData(player, json.getString("track")),
+                        LavalinkUtil.toAudioTrack(json.getString("track")),
                         AudioTrackEndReason.valueOf(json.getString("reason"))
                 );
                 break;
@@ -160,16 +158,16 @@ public class LavalinkSocket extends ReusableWebSocket {
                 }
 
                 event = new TrackExceptionEvent(player,
-                        LavalinkUtil.toAudioTrackWithData(player, json.getString("track")), ex
+                        LavalinkUtil.toAudioTrack(json.getString("track")), ex
                 );
                 break;
             case "TrackStuckEvent":
                 event = new TrackStuckEvent(player,
-                        LavalinkUtil.toAudioTrackWithData(player, json.getString("track")),
+                        LavalinkUtil.toAudioTrack(json.getString("track")),
                         json.getLong("thresholdMs")
                 );
                 break;
-            case "WebSocketClosedEvent":
+            case "WebSocketClosedEvent": // Means discord voice connection closed not this websocket to ll
                 // Unlike the other events, this is handled by the Link instead of the LavalinkPlayer,
                 // as this event is more relevant to the implementation of Link.
 

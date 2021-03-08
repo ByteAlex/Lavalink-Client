@@ -225,6 +225,21 @@ public class LavalinkPlayer implements IPlayer {
         return link;
     }
 
+    boolean pausedBecauseNoNodes = false;
+    public void noNodes() {
+        if (!paused) {
+            pausedBecauseNoNodes = true;
+            setPaused(true);
+        }
+    }
+
+    public void yesNodes() {
+        if (paused && pausedBecauseNoNodes) {
+            pausedBecauseNoNodes = false;
+            setPaused(false);
+        }
+    }
+
     private void onCommit() {
         LavalinkSocket node = link.getNode(false);
         if (node == null) return;
