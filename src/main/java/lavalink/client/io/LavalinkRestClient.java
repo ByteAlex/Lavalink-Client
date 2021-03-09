@@ -32,25 +32,21 @@ import com.sedmelluq.discord.lavaplayer.track.BasicAudioPlaylist;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import lavalink.client.LavalinkUtil;
 import lavalink.client.player.RemotePlayerInfo;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpHeaders;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.util.EntityUtils;
+import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sun.net.www.protocol.http.HttpURLConnection;
 
 import java.io.IOException;
+import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
@@ -62,16 +58,10 @@ public final class LavalinkRestClient {
     private static final String SOUNDCLOUD_SEARCH_PREFIX = "scsearch:";
 
     private final LavalinkSocket socket;
-    private Consumer<HttpClientBuilder> builderConsumer;
 
-    private final HttpClient httpClient = buildClient();
 
     LavalinkRestClient(final LavalinkSocket socket) {
         this.socket = socket;
-    }
-
-    public void setHttpClientBuilder(final Consumer<HttpClientBuilder> clientBuilder) {
-        this.builderConsumer = clientBuilder;
     }
 
 
@@ -84,13 +74,15 @@ public final class LavalinkRestClient {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 JSONObject response = apiGet(url, socket.getPassword());
-                if (!response.has("playing")) return new RemotePlayerInfo(
-                        null,
-                        false,
-                        0,
-                        System.currentTimeMillis(),
-                        null
-                );
+                if (!response.has("playing")) {
+                    return new RemotePlayerInfo(
+                            null,
+                            false,
+                            0,
+                            System.currentTimeMillis(),
+                            null
+                    );
+                }
                 String playingTrackData = response.getString("playing");
                 AudioTrack playingTrack = null;
                 if (!playingTrackData.equals("null")) {
@@ -160,7 +152,7 @@ public final class LavalinkRestClient {
      * {@code AudioLoadResultHandler callback} to handle them
      *
      * @param identifier the identifier for the track
-     * @param callback   the result handler that will handle the result of the load
+     * @param callback the result handler that will handle the result of the load
      * @see AudioPlayerManager#loadItem
      */
     @NonNull
@@ -199,7 +191,8 @@ public final class LavalinkRestClient {
                     throw new IllegalArgumentException("Invalid loadType: " + loadType);
             }
         } catch (final Exception exception) {
-            callback.loadFailed(new FriendlyException(exception.getMessage(), FriendlyException.Severity.FAULT, exception));
+            callback.loadFailed(new FriendlyException(exception.getMessage(), FriendlyException.Severity.FAULT,
+                    exception));
         }
     }
 
@@ -235,27 +228,12 @@ public final class LavalinkRestClient {
                 .concat("/loadtracks?identifier=");
     }
 
-    private HttpClient buildClient() {
-        final HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
-        if (builderConsumer == null) return httpClientBuilder.build();
-
-        builderConsumer.accept(httpClientBuilder);
-        return httpClientBuilder.build();
-    }
-
     private JSONObject apiGet(final String url, final String auth) throws IOException {
-        final HttpGet request = new HttpGet(url);
-        request.addHeader(HttpHeaders.AUTHORIZATION, auth);
-
-        final HttpResponse httpResponse = httpClient.execute(request);
-        final int statusCode = httpResponse.getStatusLine().getStatusCode();
-        if (statusCode != 200) throw new IOException("Invalid API Request Status Code: " + statusCode);
-
-        final HttpEntity entity = httpResponse.getEntity();
-        if (entity == null) throw new IOException("Invalid API Response: No Content");
-
-        final String response = EntityUtils.toString(entity);
-        return new JSONObject(response);
+        final URL httpUrl = new URL(url);
+        final HttpURLConnection connection = (HttpURLConnection) httpUrl.openConnection();
+        connection.setRequestProperty("Authorization", auth);
+        final String data = IOUtils.toString(connection.getInputStream(), StandardCharsets.UTF_8);
+        return new JSONObject(data);
     }
 
     private static final class TrackLoadResultHandler {
@@ -307,7 +285,8 @@ public final class LavalinkRestClient {
         private FriendlyException handleLoadFailed() {
             final JSONObject exception = loadResult.getJSONObject("exception");
             final String message = exception.getString("message");
-            final FriendlyException.Severity severity = FriendlyException.Severity.valueOf(exception.getString("severity"));
+            final FriendlyException.Severity severity = FriendlyException.Severity.valueOf(exception.getString(
+                    "severity"));
 
             return new FriendlyException(message, severity, new Throwable());
         }
